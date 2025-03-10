@@ -104,25 +104,11 @@
         </tr>
       </thead>
       <tbody>
-        <% 
-          // Group lifts by mountain
-          const mountains = {};
-          weeklyStatus.forEach(status => {
-            const mountain = status.lift_name.includes('Blackcomb') ? 'Blackcomb' : 'Whistler';
-            if (!mountains[mountain]) {
-              mountains[mountain] = [];
-            }
-            if (!mountains[mountain].includes(status.lift_name)) {
-              mountains[mountain].push(status.lift_name);
-            }
-          });
-        %>
-
-        <% Object.entries(mountains).forEach(([mountain, lifts]) => { %>
+        <% Object.entries(liftStructure).forEach(([mountain, lifts]) => { %>
           <tr class="mountain-section">
-            <td colspan="8"><%= mountain %> Mountain</td>
+            <td colspan="8"><%= mountain %></td>
           </tr>
-          <% lifts.sort().forEach(liftName => { %>
+          <% lifts.forEach(liftName => { %>
             <tr>
               <td><%= liftName %></td>
               <% dates.forEach(date => { %>

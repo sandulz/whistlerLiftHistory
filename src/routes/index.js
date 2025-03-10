@@ -2,26 +2,34 @@ const express = require('express');
 const router = express.Router();
 const LiftStatus = require('../models/liftStatus');
 
+// Define the lift structure
+const LIFT_STRUCTURE = {
+  'Whistler Mountain': [
+    'Peak Express',
+    'Harmony 6 Express',
+    'Symphony Express',
+    'T-Bar'
+  ],
+  'Blackcomb Mountain': [
+    'Glacier Express',
+    '7th Heaven Express',
+    'Horstman T-Bar',
+    'Showcase T-Bar'
+  ]
+};
+
 router.get('/', async (req, res) => {
   try {
     const weeklyStatus = await LiftStatus.getWeeklyStatus();
     
-    // Sort the status entries by mountain and lift name
-    weeklyStatus.sort((a, b) => {
-      // First sort by mountain (Whistler vs Blackcomb)
-      const mountainA = a.lift_name.includes('Blackcomb') ? 'Blackcomb' : 'Whistler';
-      const mountainB = b.lift_name.includes('Blackcomb') ? 'Blackcomb' : 'Whistler';
-      
-      if (mountainA !== mountainB) {
-        return mountainA.localeCompare(mountainB);
-      }
-      
-      // Then sort by lift name
-      return a.lift_name.localeCompare(b.lift_name);
+    // Filter status entries to only include our specified lifts
+    const filteredStatus = weeklyStatus.filter(status => {
+      return Object.values(LIFT_STRUCTURE).flat().includes(status.lift_name);
     });
 
     res.render('weeklyStatus', { 
-      weeklyStatus,
+      weeklyStatus: filteredStatus,
+      liftStructure: LIFT_STRUCTURE,
       currentTime: new Date().toLocaleString()
     });
   } catch (error) {
