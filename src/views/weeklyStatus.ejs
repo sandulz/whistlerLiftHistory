@@ -1,51 +1,149 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Weekly Lift Status</title>
+  <title>Whistler Blackcomb - Weekly Lift Status</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #1a1a1a;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
     table {
       border-collapse: collapse;
       width: 100%;
+      margin-top: 20px;
+      background-color: white;
     }
+
     th, td {
       border: 1px solid #ddd;
-      padding: 8px;
+      padding: 12px 8px;
       text-align: left;
     }
+
     th {
-      background-color: #f2f2f2;
+      background-color: #003366;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f0f0f0;
+    }
+
+    .status-open {
+      color: #2e7d32;
+      font-weight: bold;
+    }
+
+    .status-closed {
+      color: #c62828;
+    }
+
+    .mountain-section {
+      background-color: #e3f2fd;
+      font-weight: bold;
+    }
+
+    .last-updated {
+      text-align: right;
+      margin-bottom: 20px;
+      color: #666;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <h1>Weekly Lift Status</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Lift Name</th>
-        <% for(let i = 0; i < 7; i++) { %>
-          <th><%= new Date(Date.now() - i * 24 * 60 * 60 * 1000).toLocaleDateString() %></th>
-        <% } %>
-      </tr>
-    </thead>
-    <tbody>
-      <% // Group status by lift %>
-      <% const liftGroups = {}; %>
-      <% weeklyStatus.forEach(status => { %>
-        <% if (!liftGroups[status.lift_name]) liftGroups[status.lift_name] = {}; %>
-        <% liftGroups[status.lift_name][status.date] = status.daily_statuses.includes('open') ? 'Opened' : 'Closed'; %>
-      <% }); %>
-      
-      <% Object.entries(liftGroups).forEach(([liftName, dates]) => { %>
+  <div class="container">
+    <h1>Whistler Blackcomb Weekly Lift Status</h1>
+    
+    <div class="last-updated">
+      Last updated: <%= new Date().toLocaleString() %>
+    </div>
+
+    <table>
+      <thead>
         <tr>
-          <td><%= liftName %></td>
-          <% for(let i = 0; i < 7; i++) { %>
-            <% const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; %>
-            <td><%= dates[date] || 'No Data' %></td>
-          <% } %>
+          <th>Lift Name</th>
+          <% 
+            // Generate the last 7 days of dates in reverse order (oldest to newest)
+            const dates = [...Array(7)].map((_, i) => {
+              const date = new Date();
+              date.setDate(date.getDate() - (6 - i));
+              return date;
+            });
+          %>
+          <% dates.forEach(date => { %>
+            <th><%= date.toLocaleDateString('en-US', { 
+              weekday: 'short', 
+              month: 'short', 
+              day: 'numeric' 
+            }) %></th>
+          <% }); %>
         </tr>
-      <% }); %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% 
+          // Group lifts by mountain
+          const mountains = {};
+          weeklyStatus.forEach(status => {
+            const mountain = status.lift_name.includes('Blackcomb') ? 'Blackcomb' : 'Whistler';
+            if (!mountains[mountain]) {
+              mountains[mountain] = [];
+            }
+            if (!mountains[mountain].includes(status.lift_name)) {
+              mountains[mountain].push(status.lift_name);
+            }
+          });
+        %>
+
+        <% Object.entries(mountains).forEach(([mountain, lifts]) => { %>
+          <tr class="mountain-section">
+            <td colspan="8"><%= mountain %> Mountain</td>
+          </tr>
+          <% lifts.sort().forEach(liftName => { %>
+            <tr>
+              <td><%= liftName %></td>
+              <% dates.forEach(date => { %>
+                <% 
+                  const dateStr = date.toISOString().split('T')[0];
+                  const status = weeklyStatus.find(s => 
+                    s.lift_name === liftName && 
+                    s.date === dateStr
+                  );
+                  const statusClass = status && status.status === 'Opened' ? 
+                    'status-open' : 'status-closed';
+                %>
+                <td class="<%= statusClass %>">
+                  <%= status ? status.status : 'No Data' %>
+                </td>
+              <% }); %>
+            </tr>
+          <% }); %>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html> 
