@@ -22,8 +22,16 @@ class LiftStatus {
           SELECT 
             lift_name,
             date(timestamp) as date,
-            GROUP_CONCAT(status) as daily_statuses,
-            MAX(CASE WHEN lower(status) = 'open' THEN 1 ELSE 0 END) as was_open
+            CASE 
+              WHEN EXISTS (
+                SELECT 1 
+                FROM lift_status ls2 
+                WHERE ls2.lift_name = lift_status.lift_name 
+                AND date(ls2.timestamp) = date(lift_status.timestamp)
+                AND LOWER(ls2.status) = 'open'
+              ) THEN 'Opened'
+              ELSE 'Closed'
+            END as status
           FROM lift_status
           WHERE timestamp >= date('now', '-7 days')
           GROUP BY lift_name, date(timestamp)
@@ -31,7 +39,7 @@ class LiftStatus {
         SELECT 
           lift_name,
           date,
-          CASE WHEN was_open = 1 THEN 'Opened' ELSE 'Closed' END as status
+          status
         FROM DailyStatus
         ORDER BY lift_name, date DESC
       `;

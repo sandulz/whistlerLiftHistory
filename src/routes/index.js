@@ -15,6 +15,9 @@ const LIFT_STRUCTURE = {
     '7th Heaven Express',
     'Horstman T-Bar',
     'Showcase T-Bar'
+  ],
+  'Connection': [
+    'PEAK 2 PEAK Gondola'
   ]
 };
 
