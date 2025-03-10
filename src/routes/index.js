@@ -23,7 +23,7 @@ const LIFT_STRUCTURE = {
 
 router.get('/', async (req, res) => {
   try {
-    const weeklyStatus = await LiftStatus.getWeeklyStatus();
+    const weeklyStatus = await LiftStatus.getWeeklyStatusWithCurrent();
     
     // Filter status entries to only include our specified lifts
     const filteredStatus = weeklyStatus.filter(status => {

@@ -48,10 +48,6 @@
       background-color: #f9f9f9;
     }
 
-    tr:hover {
-      background-color: #f0f0f0;
-    }
-
     .status-open {
       color: #2e7d32;
       font-weight: bold;
@@ -71,6 +67,25 @@
       margin-bottom: 20px;
       color: #666;
       font-style: italic;
+    }
+
+    th:last-child, td:last-child {
+      border-left: 2px solid #000;
+      background-color: #f0f0f0;
+    }
+
+    .mountain-section td:last-child {
+      border-left: 1px solid #ddd;
+      background-color: #e3f2fd;
+    }
+
+    th:last-child {
+      background-color: #002855;
+      border-left: 2px solid #000;
+    }
+
+    tr:nth-child(even) td:last-child {
+      background-color: #e8e8e8;
     }
   </style>
 </head>
@@ -101,12 +116,13 @@
               day: 'numeric' 
             }) %></th>
           <% }); %>
+          <th>Current Status</th>
         </tr>
       </thead>
       <tbody>
         <% Object.entries(liftStructure).forEach(([mountain, lifts]) => { %>
           <tr class="mountain-section">
-            <td colspan="8"><%= mountain %></td>
+            <td colspan="9"><%= mountain %></td>
           </tr>
           <% lifts.forEach(liftName => { %>
             <tr>
@@ -125,6 +141,18 @@
                   <%= status ? status.status : 'No Data' %>
                 </td>
               <% }); %>
+              <% 
+                const currentStatus = weeklyStatus.find(s => 
+                  s.lift_name === liftName && 
+                  s.date === new Date().toISOString().split('T')[0]
+                );
+                const currentStatusClass = currentStatus && 
+                  currentStatus.current_status.toLowerCase() === 'open' ? 
+                  'status-open' : 'status-closed';
+              %>
+              <td class="<%= currentStatusClass %>">
+                <%= currentStatus ? currentStatus.current_status : 'No Data' %>
+              </td>
             </tr>
           <% }); %>
         <% }); %>
