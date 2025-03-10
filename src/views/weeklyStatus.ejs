@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weekly Lift Status</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Weekly Lift Status</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Lift Name</th>
+        <% for(let i = 0; i < 7; i++) { %>
+          <th><%= new Date(Date.now() - i * 24 * 60 * 60 * 1000).toLocaleDateString() %></th>
+        <% } %>
+      </tr>
+    </thead>
+    <tbody>
+      <% // Group status by lift %>
+      <% const liftGroups = {}; %>
+      <% weeklyStatus.forEach(status => { %>
+        <% if (!liftGroups[status.lift_name]) liftGroups[status.lift_name] = {}; %>
+        <% liftGroups[status.lift_name][status.date] = status.daily_statuses.includes('open') ? 'Opened' : 'Closed'; %>
+      <% }); %>
+      
+      <% Object.entries(liftGroups).forEach(([liftName, dates]) => { %>
+        <tr>
+          <td><%= liftName %></td>
+          <% for(let i = 0; i < 7; i++) { %>
+            <% const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; %>
+            <td><%= dates[date] || 'No Data' %></td>
+          <% } %>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html> 
