@@ -2,26 +2,44 @@
 <html>
 <head>
   <title>Whistler Blackcomb - Weekly Lift Status</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Prompt', sans-serif;
       margin: 20px;
       background-color: #f5f5f5;
     }
     
     .container {
-      max-width: 1200px;
+      max-width: 100%;
+      padding: 10px;
       margin: 0 auto;
       background-color: white;
-      padding: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 1200px;
+        padding: 20px;
+      }
     }
 
     h1 {
       color: #1a1a1a;
       text-align: center;
       margin-bottom: 30px;
+      font-size: clamp(1.2rem, 4vw, 2rem);
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 1rem;
+      position: relative;
     }
 
     table {
@@ -29,12 +47,27 @@
       width: 100%;
       margin-top: 20px;
       background-color: white;
+      min-width: 800px;
     }
 
     th, td {
       border: 1px solid #ddd;
-      padding: 12px 8px;
+      padding: clamp(4px, 1vw, 12px) clamp(4px, 1vw, 8px);
       text-align: left;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      white-space: nowrap;
+    }
+
+    td:first-child {
+      position: sticky;
+      left: 0;
+      background-color: white;
+      z-index: 1;
+      border-right: 2px solid #ddd;
+    }
+
+    .mountain-section td:first-child {
+      background-color: #f2f2f2;
     }
 
     th {
@@ -42,6 +75,20 @@
       color: white;
       position: sticky;
       top: 0;
+      z-index: 2;
+    }
+
+    th:first-child {
+      left: 0;
+      z-index: 3;
+    }
+
+    .last-updated {
+      text-align: right;
+      margin-bottom: 20px;
+      color: #666;
+      font-style: italic;
+      font-size: clamp(0.8rem, 2vw, 1rem);
     }
 
     tr:nth-child(even) {
@@ -58,30 +105,26 @@
     }
 
     .mountain-section {
-      background-color: #e3f2fd;
+      background-color: #f2f2f2;
       font-weight: bold;
-    }
-
-    .last-updated {
-      text-align: right;
-      margin-bottom: 20px;
-      color: #666;
-      font-style: italic;
     }
 
     th:last-child, td:last-child {
       border-left: 2px solid #000;
       background-color: #f0f0f0;
+      text-align: center;
     }
 
     .mountain-section td:last-child {
       border-left: 1px solid #ddd;
-      background-color: #e3f2fd;
+      background-color: #f2f2f2;
+      text-align: left;
     }
 
     th:last-child {
       background-color: #002855;
       border-left: 2px solid #000;
+      text-align: center;
     }
 
     tr:nth-child(even) td:last-child {
@@ -97,67 +140,69 @@
       Last updated: <%= new Date().toLocaleString() %>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Lift Name</th>
-          <% 
-            // Generate the last 7 days of dates in reverse order (oldest to newest)
-            const dates = [...Array(7)].map((_, i) => {
-              const date = new Date();
-              date.setDate(date.getDate() - (6 - i));
-              return date;
-            });
-          %>
-          <% dates.forEach(date => { %>
-            <th><%= date.toLocaleDateString('en-US', { 
-              weekday: 'short', 
-              month: 'short', 
-              day: 'numeric' 
-            }) %></th>
-          <% }); %>
-          <th>Current Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% Object.entries(liftStructure).forEach(([mountain, lifts]) => { %>
-          <tr class="mountain-section">
-            <td colspan="9"><%= mountain %></td>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Lift Name</th>
+            <% 
+              // Generate the last 7 days of dates in reverse order (oldest to newest)
+              const dates = [...Array(7)].map((_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() - (6 - i));
+                return date;
+              });
+            %>
+            <% dates.forEach(date => { %>
+              <th><%= date.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+              }) %></th>
+            <% }); %>
+            <th>Current Status</th>
           </tr>
-          <% lifts.forEach(liftName => { %>
-            <tr>
-              <td><%= liftName %></td>
-              <% dates.forEach(date => { %>
+        </thead>
+        <tbody>
+          <% Object.entries(liftStructure).forEach(([mountain, lifts]) => { %>
+            <tr class="mountain-section">
+              <td colspan="9"><%= mountain %></td>
+            </tr>
+            <% lifts.forEach(liftName => { %>
+              <tr>
+                <td><%= liftName %></td>
+                <% dates.forEach(date => { %>
+                  <% 
+                    const dateStr = date.toISOString().split('T')[0];
+                    const status = weeklyStatus.find(s => 
+                      s.lift_name === liftName && 
+                      s.date === dateStr
+                    );
+                    const statusClass = status && status.status === 'Opened' ? 
+                      'status-open' : 'status-closed';
+                  %>
+                  <td class="<%= statusClass %>">
+                    <%= status ? status.status : 'No Data' %>
+                  </td>
+                <% }); %>
                 <% 
-                  const dateStr = date.toISOString().split('T')[0];
-                  const status = weeklyStatus.find(s => 
+                  const currentStatus = weeklyStatus.find(s => 
                     s.lift_name === liftName && 
-                    s.date === dateStr
+                    s.date === new Date().toISOString().split('T')[0]
                   );
-                  const statusClass = status && status.status === 'Opened' ? 
+                  const currentStatusClass = currentStatus && 
+                    currentStatus.current_status.toLowerCase() === 'open' ? 
                     'status-open' : 'status-closed';
                 %>
-                <td class="<%= statusClass %>">
-                  <%= status ? status.status : 'No Data' %>
+                <td class="<%= currentStatusClass %>">
+                  <%= currentStatus ? currentStatus.current_status : 'No Data' %>
                 </td>
-              <% }); %>
-              <% 
-                const currentStatus = weeklyStatus.find(s => 
-                  s.lift_name === liftName && 
-                  s.date === new Date().toISOString().split('T')[0]
-                );
-                const currentStatusClass = currentStatus && 
-                  currentStatus.current_status.toLowerCase() === 'open' ? 
-                  'status-open' : 'status-closed';
-              %>
-              <td class="<%= currentStatusClass %>">
-                <%= currentStatus ? currentStatus.current_status : 'No Data' %>
-              </td>
-            </tr>
+              </tr>
+            <% }); %>
           <% }); %>
-        <% }); %>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
 </body>
 </html> 
