@@ -1,6 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const LiftStatus = require('../models/liftStatus');
+const Snowfall = require('../models/snowfall');
 
 async function scrapeLiftStatus() {
   try {
@@ -50,6 +51,45 @@ async function scrapeLiftStatus() {
   }
 }
 
+async function scrapeSnowfall() {
+  try {
+    const response = await axios.get(
+      'https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx'
+    );
+    
+    // Look for the FR.snowReportData structure
+    const snowDataMatch = response.data.match(/FR\.snowReportData\s*=\s*({[\s\S]*?});/);
+    
+    if (!snowDataMatch) {
+      throw new Error('Could not find snow report data in page');
+    }
+
+    try {
+      const snowData = JSON.parse(snowDataMatch[1]);
+      const snowfallCm = parseInt(snowData.TwentyFourHourSnowfall.Centimeters);
+      
+      if (isNaN(snowfallCm)) {
+        throw new Error('Could not parse snowfall data');
+      }
+
+      await Snowfall.create(snowfallCm);
+      console.log(`Updated snowfall: ${snowfallCm}cm`);
+      console.log(`Last updated: ${snowData.LastUpdatedText}`);
+      
+      return snowfallCm;
+    } catch (parseError) {
+      console.error('Error parsing snow data:', parseError);
+      throw new Error('Could not parse snow report data');
+    }
+  } catch (error) {
+    if (error.response) {
+      console.error('Response error:', error.response.status, error.response.data);
+    }
+    console.error('Error scraping snowfall:', error);
+    throw error;
+  }
+}
+
 // Function to test the scraper
 async function testScraper() {
   try {
@@ -65,5 +105,6 @@ async function testScraper() {
 
 module.exports = {
   scrapeLiftStatus,
-  testScraper
+  testScraper,
+  scrapeSnowfall
 }; 

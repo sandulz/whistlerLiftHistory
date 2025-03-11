@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const LiftStatus = require('../models/liftStatus');
+const Snowfall = require('../models/snowfall');
 
 // Define the lift structure
 const LIFT_STRUCTURE = {
@@ -22,7 +23,11 @@ const LIFT_STRUCTURE = {
 
 router.get('/', async (req, res) => {
   try {
-    const weeklyStatus = await LiftStatus.getWeeklyStatusWithCurrent();
+    // Get both lift status and snowfall data
+    const [weeklyStatus, weeklySnowfall] = await Promise.all([
+      LiftStatus.getWeeklyStatusWithCurrent(),
+      Snowfall.getWeeklySnowfall()
+    ]);
     
     // Filter status entries to only include our specified lifts
     const filteredStatus = weeklyStatus.filter(status => {
@@ -31,12 +36,13 @@ router.get('/', async (req, res) => {
 
     res.render('weeklyStatus', { 
       weeklyStatus: filteredStatus,
+      weeklySnowfall: weeklySnowfall,
       liftStructure: LIFT_STRUCTURE,
       currentTime: new Date().toLocaleString()
     });
   } catch (error) {
-    console.error('Error fetching lift status:', error);
-    res.status(500).send('Error fetching lift status');
+    console.error('Error fetching data:', error);
+    res.status(500).send('Error fetching data');
   }
 });
 

@@ -6,4 +6,10 @@ CREATE TABLE IF NOT EXISTS lift_status (
 );
 
 CREATE INDEX IF NOT EXISTS idx_lift_status_timestamp 
-ON lift_status(timestamp); 
+ON lift_status(timestamp);
+
+CREATE TABLE IF NOT EXISTS daily_snowfall (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    snowfall_cm INTEGER,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+); 

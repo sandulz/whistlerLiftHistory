@@ -194,6 +194,15 @@
     .icon-scheduled {
       color: rgb(255, 163, 107);
     }
+
+    .snowfall-row {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+
+    .snowfall-cell {
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -229,6 +238,20 @@
           </tr>
         </thead>
         <tbody>
+          <!-- Add snowfall row -->
+          <tr class="snowfall-row">
+            <td><i class="fa-solid fa-snowflake"></i> 24hr Snowfall <i class="fa-solid fa-snowflake"></i></td>
+            <% dates.forEach(date => { %>
+              <% 
+                const dateStr = date.toISOString().split('T')[0];
+                const snowfall = weeklySnowfall.find(s => s.date === dateStr);
+              %>
+              <td class="snowfall-cell">
+                <%= snowfall ? `${snowfall.snowfall_cm}cm` : 'No Data' %>
+              </td>
+            <% }); %>
+            <td></td>
+          </tr>
           <% Object.entries(liftStructure).forEach(([mountain, lifts]) => { %>
             <tr class="mountain-section">
               <td colspan="9"><%= mountain %></td>
