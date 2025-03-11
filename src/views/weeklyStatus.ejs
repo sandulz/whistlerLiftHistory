@@ -4,6 +4,7 @@
   <title>Whistler Blackcomb - Weekly Lift Status</title>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     body {
       font-family: 'Prompt', sans-serif;
@@ -145,13 +146,13 @@
     /* Modify the last column styles */
     td:last-child.status-open {
       background-color: #f0f0f0;  /* Restore original background */
-      color: #5dd25d;  /* Green text */
+      color: black;  /* Change to black */
       font-weight: bold;
     }
 
     td:last-child.status-closed {
       background-color: #f0f0f0;  /* Restore original background */
-      color: #e46767;  /* Red text */
+      color: black;  /* Change to black */
       font-weight: bold;
     }
 
@@ -166,6 +167,32 @@
     tr:nth-child(even) td:last-child.status-closed,
     tr:nth-child(even) td:last-child.status-no-data {
       background-color: #e8e8e8;
+    }
+
+    /* Update last column text color */
+    td:last-child {
+      color: black;
+    }
+
+    /* Icon styles */
+    .status-icon {
+      margin-right: 6px;
+    }
+
+    .icon-open {
+      color: rgb(81, 200, 123);
+    }
+
+    .icon-closed {
+      color: rgb(255, 74, 74);
+    }
+
+    .icon-hold {
+      color: rgb(252, 179, 21);
+    }
+
+    .icon-scheduled {
+      color: rgb(255, 163, 107);
     }
   </style>
 </head>
@@ -237,6 +264,17 @@
                   }
                 %>
                 <td class="<%= currentStatusClass %>">
+                  <% if (currentStatus) { %>
+                    <% if (currentStatus.current_status === 'Open') { %>
+                      <i class="fa-solid fa-circle-check status-icon icon-open"></i>
+                    <% } else if (currentStatus.current_status === 'Closed') { %>
+                      <i class="fa-solid fa-circle-xmark status-icon icon-closed"></i>
+                    <% } else if (currentStatus.current_status === 'On Hold') { %>
+                      <i class="fa-solid fa-circle-pause status-icon icon-hold"></i>
+                    <% } else if (currentStatus.current_status === 'Scheduled') { %>
+                      <i class="fa-solid fa-clock status-icon icon-scheduled"></i>
+                    <% } %>
+                  <% } %>
                   <%= currentStatus ? currentStatus.current_status : 'No Data' %>
                 </td>
               </tr>

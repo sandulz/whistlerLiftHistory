@@ -94,10 +94,14 @@ class LiftStatus {
           SELECT 
             lift_name, 
             CASE 
-              WHEN LOWER(status) = 'open' THEN 'Open'
-              WHEN LOWER(status) = '1' THEN 'Open'
-              WHEN LOWER(status) = '0' THEN 'Closed'
-              ELSE 'Closed'
+              WHEN status = '1' THEN 'Open'
+              WHEN status = '0' THEN 'Closed'
+              WHEN status = '2' THEN 'On Hold'
+              WHEN status = '3' THEN 'Scheduled'
+              WHEN status = '4' THEN 'Weather Hold'
+              WHEN status = '5' THEN 'Maintenance Hold'
+              WHEN status = '6' THEN 'Delayed'
+              ELSE status  /* Keep original text if it's not a number */
             END as current_status
           FROM lift_status
           WHERE timestamp = (
