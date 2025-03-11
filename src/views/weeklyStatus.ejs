@@ -96,12 +96,19 @@
     }
 
     .status-open {
-      color: #2e7d32;
-      font-weight: bold;
+      background-color: #5dd25d;  /* Light green background */
+      color: black;
     }
 
     .status-closed {
-      color: #c62828;
+      background-color: #e46767;  /* Light red background */
+      color: black;
+    }
+
+    /* Add style for cells with no data */
+    .status-no-data {
+      background-color: white;
+      color: black;
     }
 
     .mountain-section {
@@ -128,6 +135,32 @@
     }
 
     tr:nth-child(even) td:last-child {
+      background-color: #e8e8e8;
+    }
+
+    /* Modify the last column styles */
+    td:last-child.status-open {
+      background-color: #f0f0f0;  /* Restore original background */
+      color: #5dd25d;  /* Green text */
+      font-weight: bold;
+    }
+
+    td:last-child.status-closed {
+      background-color: #f0f0f0;  /* Restore original background */
+      color: #e46767;  /* Red text */
+      font-weight: bold;
+    }
+
+    td:last-child.status-no-data {
+      background-color: #f0f0f0;  /* Restore original background */
+      color: black;
+      font-weight: bold;
+    }
+
+    /* Keep the alternating row background for last column */
+    tr:nth-child(even) td:last-child.status-open,
+    tr:nth-child(even) td:last-child.status-closed,
+    tr:nth-child(even) td:last-child.status-no-data {
       background-color: #e8e8e8;
     }
   </style>
@@ -178,8 +211,10 @@
                       s.lift_name === liftName && 
                       s.date === dateStr
                     );
-                    const statusClass = status && status.status === 'Opened' ? 
-                      'status-open' : 'status-closed';
+                    let statusClass = 'status-no-data';
+                    if (status) {
+                      statusClass = status.status === 'Opened' ? 'status-open' : 'status-closed';
+                    }
                   %>
                   <td class="<%= statusClass %>">
                     <%= status ? status.status : 'No Data' %>
@@ -190,9 +225,11 @@
                     s.lift_name === liftName && 
                     s.date === new Date().toISOString().split('T')[0]
                   );
-                  const currentStatusClass = currentStatus && 
-                    currentStatus.current_status.toLowerCase() === 'open' ? 
-                    'status-open' : 'status-closed';
+                  let currentStatusClass = 'status-no-data';
+                  if (currentStatus) {
+                    currentStatusClass = currentStatus.current_status.toLowerCase() === 'open' ? 
+                      'status-open' : 'status-closed';
+                  }
                 %>
                 <td class="<%= currentStatusClass %>">
                   <%= currentStatus ? currentStatus.current_status : 'No Data' %>
