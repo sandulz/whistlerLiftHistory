@@ -29,9 +29,25 @@
 
     h1 {
       color: #1a1a1a;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: clamp(1.2rem, 4vw, 2rem);
+      margin: 0;  /* Remove margin */
+      font-size: clamp(0.8rem, 2vw, 1rem);  /* Match other text size */
+      font-weight: bold;
+      display: inline;  /* Make it inline */
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .last-updated {
+      text-align: right;
+      color: #666;
+      font-style: italic;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      margin: 0;  /* Remove margin */
     }
 
     .table-wrapper {
@@ -81,18 +97,6 @@
     th:first-child {
       left: 0;
       z-index: 3;
-    }
-
-    .last-updated {
-      text-align: right;
-      margin-bottom: 20px;
-      color: #666;
-      font-style: italic;
-      font-size: clamp(0.8rem, 2vw, 1rem);
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
     }
 
     .status-open {
@@ -167,12 +171,13 @@
 </head>
 <body>
   <div class="container">
-    <h1>Whistler Blackcomb Weekly Lift Status</h1>
-    
-    <div class="last-updated">
-      Last updated: <%= new Date().toLocaleString() %>
+    <div class="header-row">
+      <h1>Whistler Blackcomb Weekly Lift Status</h1>
+      <div class="last-updated">
+        Last updated: <%= new Date().toLocaleString() %>
+      </div>
     </div>
-
+    
     <div class="table-wrapper">
       <table>
         <thead>
