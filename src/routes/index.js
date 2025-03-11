@@ -13,7 +13,6 @@ const LIFT_STRUCTURE = {
   'Blackcomb Mountain': [
     'Glacier Express',
     '7th Heaven Express',
-    'Horstman T-Bar',
     'Showcase T-Bar'
   ],
   'Connection': [
