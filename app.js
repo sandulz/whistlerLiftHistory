@@ -51,8 +51,9 @@ async function startServer() {
     app.use('/', routes);
 
     const port = process.env.PORT || 3000;
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+    const host = '0.0.0.0';
+    app.listen(port, host, () => {
+      console.log(`Server is running on ${host}:${port}`);
     });
   } catch (err) {
     console.error('Failed to start server:', err);
