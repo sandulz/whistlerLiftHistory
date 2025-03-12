@@ -10,11 +10,21 @@ const app = express();
 async function startServer() {
   try {
     await initializeDatabase();
-    console.log('Database and server initialized on port ' + (process.env.PORT || 3000));
+    
+    // Add trust proxy setting for running behind Nginx
+    app.set('trust proxy', 1);
     
     // View engine setup
     app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, 'src/views'));
+
+    // Add some basic security middleware
+    app.use((req, res, next) => {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+      res.setHeader('X-XSS-Protection', '1; mode=block');
+      next();
+    });
 
     // Schedule lift status scraping every 10 minutes
     cron.schedule('0,10,20,30,40,50 * * * *', async () => {
@@ -50,11 +60,12 @@ async function startServer() {
     // Routes
     app.use('/', routes);
 
-    // Use port 3000 for development, but allow override for production
+    // Use port 3000 for production
     const port = process.env.NODE_ENV === 'production' ? 3000 : (process.env.PORT || 3000);
-    const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+    const host = process.env.NODE_ENV === 'production' ? '127.0.0.1' : 'localhost';
+    
     app.listen(port, host, () => {
-      console.log(`Server is running on ${host}:${port}`);
+      console.log(`Server is running on ${host}:${port} in ${process.env.NODE_ENV || 'development'} mode`);
     });
   } catch (err) {
     console.error('Failed to start server:', err);
