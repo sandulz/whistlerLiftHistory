@@ -82,7 +82,7 @@ class LiftStatus {
                 FROM lift_status ls2 
                 WHERE ls2.lift_name = lift_status.lift_name 
                 AND date(ls2.timestamp) = date(lift_status.timestamp)
-                AND LOWER(ls2.status) = 'open'
+                AND (LOWER(ls2.status) = 'open' OR ls2.status = '1')
               ) THEN 'Opened'
               ELSE 'Closed'
             END as status

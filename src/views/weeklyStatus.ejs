@@ -244,7 +244,11 @@
             <% dates.forEach(date => { %>
               <% 
                 const dateStr = date.toISOString().split('T')[0];
-                const snowfall = weeklySnowfall.find(s => s.date === dateStr);
+                // Find snowfall entry with exact date match
+                const snowfall = weeklySnowfall.find(s => {
+                  const snowfallDate = new Date(s.date).toISOString().split('T')[0];
+                  return snowfallDate === dateStr;
+                });
               %>
               <td class="snowfall-cell">
                 <%= snowfall ? `${snowfall.snowfall_cm}cm` : 'No Data' %>

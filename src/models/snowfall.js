@@ -22,7 +22,8 @@ class Snowfall {
           snowfall_cm,
           date(timestamp) as date
         FROM daily_snowfall
-        WHERE timestamp >= date('now', '-7 days')
+        WHERE date(timestamp) >= date('now', '-7 days')
+        GROUP BY date(timestamp)  /* Only one reading per day */
         ORDER BY date DESC
       `;
       
