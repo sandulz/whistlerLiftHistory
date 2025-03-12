@@ -10,6 +10,7 @@
       font-family: 'Prompt', sans-serif;
       margin: 20px;
       background-color: #f5f5f5;
+      font-size: 13px;  /* Base font size */
     }
     
     .container {
@@ -31,7 +32,7 @@
     h1 {
       color: #1a1a1a;
       margin: 0;  /* Remove margin */
-      font-size: clamp(0.8rem, 2vw, 1rem);  /* Match other text size */
+      font-size: 14px;  /* Updated from 1.4rem */
       font-weight: bold;
       display: inline;  /* Make it inline */
     }
@@ -47,7 +48,7 @@
       text-align: right;
       color: #666;
       font-style: italic;
-      font-size: clamp(0.8rem, 2vw, 1rem);
+      font-size: 12px;  /* Updated from 1rem */
       margin: 0;  /* Remove margin */
     }
 
@@ -71,7 +72,7 @@
       border: 1px solid #ddd;
       padding: clamp(4.3px, 0.87vw, 10.1px) clamp(4px, 1vw, 8px);
       text-align: left;
-      font-size: clamp(0.8rem, 2vw, 1rem);
+      font-size: 13px;  /* Updated from 1.1rem */
       white-space: nowrap;
       line-height: 1.2;
     }
@@ -81,7 +82,7 @@
       left: 0;
       background-color: white;
       z-index: 1;
-      border-right: 2px solid #ddd;
+      border-right: 1px solid #ddd;  /* Reset to match other borders */
     }
 
     th {
@@ -114,43 +115,50 @@
     }
 
     th:last-child, td:last-child {
-      border-left: 2px solid #000;
+      border-left: 1px solid #ddd;  /* Reset to match other borders */
       background-color: #f0f0f0;
       text-align: center;
     }
 
-    /* Modify the last column styles */
+    th:last-child {
+      background-color: #003366;
+      text-align: center;
+    }
+
+    /* Remove the bottom borders */
+    tr:last-child td:first-child,
+    tr:last-child td:last-child {
+      border-bottom: 1px solid #ddd;  /* Reset to match other borders */
+    }
+
     td:last-child.status-open {
-      background-color: #f0f0f0;  /* Restore original background */
-      color: black;  /* Change to black */
-      font-weight: bold;
-    }
-
-    td:last-child.status-closed {
-      background-color: #f0f0f0;  /* Restore original background */
-      color: black;  /* Change to black */
-      font-weight: bold;
-    }
-
-    td:last-child.status-no-data {
-      background-color: #f0f0f0;  /* Restore original background */
+      background-color: #f0f0f0;
       color: black;
       font-weight: bold;
     }
 
-    /* Keep the alternating row background for last column */
+    td:last-child.status-closed {
+      background-color: #f0f0f0;
+      color: black;
+      font-weight: bold;
+    }
+
+    td:last-child.status-no-data {
+      background-color: #f0f0f0;
+      color: black;
+      font-weight: bold;
+    }
+
     tr:nth-child(even) td:last-child.status-open,
     tr:nth-child(even) td:last-child.status-closed,
     tr:nth-child(even) td:last-child.status-no-data {
       background-color: #e8e8e8;
     }
 
-    /* Update last column text color */
     td:last-child {
       color: black;
     }
 
-    /* Icon styles */
     .status-icon {
       margin-right: 6px;
     }
@@ -182,29 +190,21 @@
 
     .opening-time {
       display: block;
-      font-size: 0.8em;
+      font-size: 11px;  /* Updated from 0.9rem */
       color: #444;
       margin-top: 2px;
       text-align: center;
     }
 
-    /* Center align all date columns */
     td:not(:first-child):not(:last-child),
     th:not(:first-child):not(:last-child) {
       text-align: center;
     }
 
-    /* Update mountain name row styling to affect all cells in the row */
     tr td.mountain-name,
     tr:has(td.mountain-name) td {
       font-weight: bold;
       background-color: #f2f2f2;
-    }
-
-    th:last-child {
-      background-color: #003366;
-      border-left: 2px solid #000;
-      text-align: center;
     }
   </style>
 </head>
