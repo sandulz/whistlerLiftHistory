@@ -293,7 +293,7 @@
                   <td class="<%= statusClass %>">
                     <%= status ? status.status : 'No Data' %>
                     <% if (status && status.status === 'Opened' && status.first_open_time) { %>
-                      <span class="opening-time"><%= status.first_open_time %></span>
+                      <span class="opening-time"><%= status.first_open_time.slice(0, 5) %></span>
                     <% } %>
                   </td>
                 <% }); %>
