@@ -50,8 +50,9 @@ async function startServer() {
     // Routes
     app.use('/', routes);
 
-    const port = process.env.PORT || 3000;
-    const host = '0.0.0.0';
+    // Use port 3000 for development, but allow override for production
+    const port = process.env.NODE_ENV === 'production' ? 3000 : (process.env.PORT || 3000);
+    const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
     app.listen(port, host, () => {
       console.log(`Server is running on ${host}:${port}`);
     });
