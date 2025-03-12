@@ -85,7 +85,23 @@ class LiftStatus {
                 AND (LOWER(ls2.status) = 'open' OR ls2.status = '1')
               ) THEN 'Opened'
               ELSE 'Closed'
-            END as status
+            END as status,
+            CASE 
+              WHEN EXISTS (
+                SELECT 1 
+                FROM lift_status ls2 
+                WHERE ls2.lift_name = lift_status.lift_name 
+                AND date(ls2.timestamp) = date(lift_status.timestamp)
+                AND (LOWER(ls2.status) = 'open' OR ls2.status = '1')
+              ) THEN (
+                SELECT time(MIN(ls3.timestamp), 'localtime')
+                FROM lift_status ls3
+                WHERE ls3.lift_name = lift_status.lift_name 
+                AND date(ls3.timestamp) = date(lift_status.timestamp)
+                AND (LOWER(ls3.status) = 'open' OR ls3.status = '1')
+              )
+              ELSE NULL
+            END as first_open_time
           FROM lift_status
           WHERE timestamp >= date('now', '-7 days')
           GROUP BY lift_name, date(timestamp)
@@ -112,6 +128,7 @@ class LiftStatus {
           d.lift_name,
           d.date,
           d.status,
+          d.first_open_time,
           c.current_status
         FROM DailyStatus d
         LEFT JOIN CurrentStatus c ON d.lift_name = c.lift_name

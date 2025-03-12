@@ -69,10 +69,11 @@
 
     th, td {
       border: 1px solid #ddd;
-      padding: clamp(4px, 1vw, 12px) clamp(4px, 1vw, 8px);
+      padding: clamp(4.3px, 0.87vw, 10.1px) clamp(4px, 1vw, 8px);
       text-align: left;
       font-size: clamp(0.8rem, 2vw, 1rem);
       white-space: nowrap;
+      line-height: 1.2;
     }
 
     td:first-child {
@@ -203,6 +204,20 @@
     .snowfall-cell {
       text-align: center;
     }
+
+    .opening-time {
+      display: block;
+      font-size: 0.8em;
+      color: #444;
+      margin-top: 2px;
+      text-align: center;
+    }
+
+    /* Center align all date columns */
+    td:not(:first-child):not(:last-child),
+    th:not(:first-child):not(:last-child) {
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -277,6 +292,9 @@
                   %>
                   <td class="<%= statusClass %>">
                     <%= status ? status.status : 'No Data' %>
+                    <% if (status && status.status === 'Opened' && status.first_open_time) { %>
+                      <span class="opening-time"><%= status.first_open_time %></span>
+                    <% } %>
                   </td>
                 <% }); %>
                 <% 
