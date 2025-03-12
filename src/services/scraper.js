@@ -2,8 +2,10 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const LiftStatus = require('../models/liftStatus');
 const Snowfall = require('../models/snowfall');
+const { initializeDatabase } = require('../config/database');
 
 async function scrapeLiftStatus() {
+  const startTime = new Date();
   try {
     const response = await axios.get(
       'https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/terrain-and-lift-status.aspx'
@@ -38,12 +40,12 @@ async function scrapeLiftStatus() {
     for (const lift of lifts) {
       try {
         await LiftStatus.create(lift.name, lift.status);
-        console.log(`Updated status for ${lift.name}: ${lift.status}`);
       } catch (err) {
         console.error(`Error storing status for ${lift.name}:`, err);
       }
     }
 
+    console.log(`Lift status update complete: ${lifts.length} lifts updated at ${startTime.toLocaleTimeString()}`);
     return lifts;
   } catch (error) {
     console.error('Error scraping lift status:', error);
@@ -73,8 +75,7 @@ async function scrapeSnowfall() {
       }
 
       await Snowfall.create(snowfallCm);
-      console.log(`Updated snowfall: ${snowfallCm}cm`);
-      console.log(`Last updated: ${snowData.LastUpdatedText}`);
+      console.log(`Snowfall update complete: ${snowfallCm}cm (Last updated: ${snowData.LastUpdatedText})`);
       
       return snowfallCm;
     } catch (parseError) {
@@ -93,13 +94,10 @@ async function scrapeSnowfall() {
 // Function to test the scraper
 async function testScraper() {
   try {
+    await initializeDatabase();
     const lifts = await scrapeLiftStatus();
-    console.log('Found lifts:', lifts.length);
-    lifts.forEach(lift => {
-      console.log(`${lift.name} (${lift.mountain}): ${lift.status}`);
-    });
   } catch (error) {
-    console.error('Test failed:', error);
+    console.error('Initial scraper test failed:', error);
   }
 }
 
