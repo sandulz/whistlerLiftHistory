@@ -18,12 +18,19 @@ class Snowfall {
   static async getWeeklySnowfall() {
     return new Promise((resolve, reject) => {
       const query = `
+        WITH LatestDailySnowfall AS (
+          SELECT 
+            snowfall_cm,
+            date(timestamp) as date,
+            ROW_NUMBER() OVER (PARTITION BY date(timestamp) ORDER BY timestamp DESC) as rn
+          FROM daily_snowfall
+          WHERE date(timestamp) >= date('now', '-7 days')
+        )
         SELECT 
           snowfall_cm,
-          date(timestamp) as date
-        FROM daily_snowfall
-        WHERE date(timestamp) >= date('now', '-7 days')
-        GROUP BY date(timestamp)  /* Only one reading per day */
+          date
+        FROM LatestDailySnowfall
+        WHERE rn = 1
         ORDER BY date DESC
       `;
       
