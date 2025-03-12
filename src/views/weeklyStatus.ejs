@@ -84,10 +84,6 @@
       border-right: 2px solid #ddd;
     }
 
-    .mountain-section td:first-child {
-      background-color: #f2f2f2;
-    }
-
     th {
       background-color: #003366;
       color: white;
@@ -117,31 +113,10 @@
       color: black;
     }
 
-    .mountain-section {
-      background-color: #f2f2f2;
-      font-weight: bold;
-    }
-
     th:last-child, td:last-child {
       border-left: 2px solid #000;
       background-color: #f0f0f0;
       text-align: center;
-    }
-
-    .mountain-section td:last-child {
-      border-left: 1px solid #ddd;
-      background-color: #f2f2f2;
-      text-align: left;
-    }
-
-    th:last-child {
-      background-color: #002855;
-      border-left: 2px solid #000;
-      text-align: center;
-    }
-
-    tr:nth-child(even) td:last-child {
-      background-color: #e8e8e8;
     }
 
     /* Modify the last column styles */
@@ -218,6 +193,19 @@
     th:not(:first-child):not(:last-child) {
       text-align: center;
     }
+
+    /* Update mountain name row styling to affect all cells in the row */
+    tr td.mountain-name,
+    tr:has(td.mountain-name) td {
+      font-weight: bold;
+      background-color: #f2f2f2;
+    }
+
+    th:last-child {
+      background-color: #003366;
+      border-left: 2px solid #000;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -272,8 +260,12 @@
             <td></td>
           </tr>
           <% Object.entries(liftStructure).forEach(([mountain, lifts]) => { %>
-            <tr class="mountain-section">
-              <td colspan="9"><%= mountain %></td>
+            <tr>
+              <td class="mountain-name"><%= mountain %></td>
+              <% for(let i = 0; i < 7; i++) { %>
+                <td></td>
+              <% } %>
+              <td></td>
             </tr>
             <% lifts.forEach(liftName => { %>
               <tr>
@@ -329,5 +321,12 @@
       </table>
     </div>
   </div>
+  <script>
+    // Scroll the table wrapper to the right on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const tableWrapper = document.querySelector('.table-wrapper');
+      tableWrapper.scrollLeft = tableWrapper.scrollWidth;
+    });
+  </script>
 </body>
 </html> 
