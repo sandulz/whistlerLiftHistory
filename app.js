@@ -26,8 +26,8 @@ async function startServer() {
       next();
     });
 
-    // Schedule lift status scraping every 10 minutes
-    cron.schedule('0,10,20,30,40,50 * * * *', async () => {
+    // Schedule lift status scraping every 5 minutes (at X:00, X:05, X:10, etc.)
+    cron.schedule('*/5 * * * *', async () => {
       const now = new Date();
       console.log(`Starting scheduled lift scrape at ${now.toLocaleTimeString()}`);
       try {
