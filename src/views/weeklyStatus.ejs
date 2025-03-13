@@ -299,13 +299,13 @@
                     s.date === new Date().toISOString().split('T')[0]
                   );
                   let currentStatusClass = 'status-no-data';
-                  if (currentStatus) {
+                  if (currentStatus && currentStatus.current_status) {
                     currentStatusClass = currentStatus.current_status.toLowerCase() === 'open' ? 
                       'status-open' : 'status-closed';
                   }
                 %>
                 <td class="<%= currentStatusClass %>">
-                  <% if (currentStatus) { %>
+                  <% if (currentStatus && currentStatus.current_status) { %>
                     <% if (currentStatus.current_status === 'Open') { %>
                       <i class="fa-solid fa-circle-check status-icon icon-open"></i>
                     <% } else if (currentStatus.current_status === 'Closed') { %>
@@ -316,7 +316,7 @@
                       <i class="fa-solid fa-clock status-icon icon-scheduled"></i>
                     <% } %>
                   <% } %>
-                  <%= currentStatus ? currentStatus.current_status : 'No Data' %>
+                  <%= currentStatus && currentStatus.current_status ? currentStatus.current_status : 'No Data' %>
                 </td>
               </tr>
             <% }); %>
