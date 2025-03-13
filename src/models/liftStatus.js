@@ -157,7 +157,7 @@ class LiftStatus {
     await this.init();
     return new Promise((resolve, reject) => {
       const query = `
-        SELECT datetime(MAX(timestamp), 'localtime') as last_update
+        SELECT strftime('%Y-%m-%d %H:%M', MAX(timestamp), 'localtime') as last_update
         FROM lift_status
       `;
       
