@@ -152,6 +152,21 @@ class LiftStatus {
       });
     });
   }
+
+  static async getLastUpdateTime() {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT datetime(MAX(timestamp), 'localtime') as last_update
+        FROM lift_status
+      `;
+      
+      db.get(query, [], (err, row) => {
+        if (err) reject(err);
+        resolve(row ? row.last_update : 'No updates yet');
+      });
+    });
+  }
 }
 
 module.exports = LiftStatus; 
