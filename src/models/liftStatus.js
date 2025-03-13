@@ -1,7 +1,15 @@
-const { db } = require('../config/database');
+const { initializeDatabase } = require('../config/database');
+let db;
 
 class LiftStatus {
+  static async init() {
+    if (!db) {
+      db = await initializeDatabase();
+    }
+  }
+
   static async create(liftName, status) {
+    await this.init();
     return new Promise((resolve, reject) => {
       const query = `
         INSERT INTO lift_status (lift_name, status, timestamp) 
@@ -16,6 +24,7 @@ class LiftStatus {
   }
 
   static async getWeeklyStatus() {
+    await this.init();
     return new Promise((resolve, reject) => {
       const query = `
         WITH DailyStatus AS (
@@ -52,6 +61,7 @@ class LiftStatus {
   }
 
   static async getLatestStatus() {
+    await this.init();
     return new Promise((resolve, reject) => {
       const query = `
         SELECT DISTINCT lift_name, status
@@ -70,6 +80,7 @@ class LiftStatus {
   }
 
   static async getWeeklyStatusWithCurrent() {
+    await this.init();
     return new Promise((resolve, reject) => {
       const query = `
         WITH DailyStatus AS (

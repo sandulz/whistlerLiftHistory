@@ -34,11 +34,23 @@ router.get('/', async (req, res) => {
       return Object.values(LIFT_STRUCTURE).flat().includes(status.lift_name);
     });
 
+    // Create date in Vancouver timezone
+    const currentTime = new Date().toLocaleString('en-US', {
+      timeZone: 'America/Vancouver',
+      hour12: true,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
+    });
+
     res.render('weeklyStatus', { 
       weeklyStatus: filteredStatus,
       weeklySnowfall: weeklySnowfall,
       liftStructure: LIFT_STRUCTURE,
-      currentTime: new Date().toLocaleString()
+      currentTime: currentTime
     });
   } catch (error) {
     console.error('Error fetching data:', error);

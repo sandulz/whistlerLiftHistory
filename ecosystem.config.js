@@ -4,7 +4,8 @@ module.exports = {
     script: 'app.js',
     env: {
       NODE_ENV: 'production',
-      PORT: 3000
+      PORT: 3000,
+      TZ: 'America/Vancouver'
     },
     instances: 1,
     autorestart: true,

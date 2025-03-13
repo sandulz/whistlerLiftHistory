@@ -213,7 +213,7 @@
     <div class="header-row">
       <h1>Whistler Blackcomb Weekly Lift Status</h1>
       <div class="last-updated">
-        Last updated: <%= new Date().toLocaleString() %>
+        Last updated: <%= currentTime %>
       </div>
     </div>
     
@@ -226,8 +226,12 @@
               // Generate the last 7 days of dates in reverse order (oldest to newest)
               const dates = [...Array(7)].map((_, i) => {
                 const date = new Date();
-                date.setDate(date.getDate() - (6 - i));
-                return date;
+                // Convert to Vancouver timezone
+                const vancouverDate = new Date(date.toLocaleString('en-US', {
+                  timeZone: 'America/Vancouver'
+                }));
+                vancouverDate.setDate(vancouverDate.getDate() - (6 - i));
+                return vancouverDate;
               });
             %>
             <% dates.forEach(date => { %>

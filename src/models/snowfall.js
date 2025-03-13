@@ -1,7 +1,15 @@
-const { db } = require('../config/database');
+const { initializeDatabase } = require('../config/database');
+let db;
 
 class Snowfall {
+  static async init() {
+    if (!db) {
+      db = await initializeDatabase();
+    }
+  }
+
   static async create(snowfallCm) {
+    await this.init();
     return new Promise((resolve, reject) => {
       const query = `
         INSERT INTO daily_snowfall (snowfall_cm) 
@@ -16,6 +24,7 @@ class Snowfall {
   }
 
   static async getWeeklySnowfall() {
+    await this.init();
     return new Promise((resolve, reject) => {
       const query = `
         WITH LatestDailySnowfall AS (
