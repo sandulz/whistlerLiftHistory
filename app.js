@@ -14,15 +14,24 @@ async function startServer() {
     // Add trust proxy setting for running behind Nginx
     app.set('trust proxy', 1);
     
+    // Serve static files (for robots.txt)
+    app.use(express.static(path.join(__dirname, 'public')));
+    
     // View engine setup
     app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, 'src/views'));
 
-    // Add some basic security middleware
+    // Add security middleware
     app.use((req, res, next) => {
       res.setHeader('X-Content-Type-Options', 'nosniff');
       res.setHeader('X-Frame-Options', 'SAMEORIGIN');
       res.setHeader('X-XSS-Protection', '1; mode=block');
+      
+      // New headers to prevent indexing
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      
       next();
     });
 
